@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-#require 'dijkstra'
 require_relative '../lib/dijkstra.rb'
 
 def usage(why = nil)
