@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+#require 'dijkstra'
+require_relative '../lib/dijkstra.rb'
+
+def usage(why = nil)
+  puts "Failed: #{why}" if why
+  puts "Usage:\n\t$ dijkstra [FILE_NAME] [SOURCE_NODE] [DESTINATION_NODE]"
+  puts "Example:\n\t$ dijkstra my_graph.txt A G"
+  puts "\tShortest path is [A,B,E,G] with total cost 6"
+  exit(1)
+end
+
+@args = {'file_name' => nil, 'source' => nil, 'destination' => nil}
+usage("wrong number of arguments, expected #{@args.count}") if ARGV.size != @args.size
+
+@args.each { |k, v| @args[k] = ARGV.shift }
+usage("#{@args['file_name']} is not a file") unless File.exists? @args['file_name']
+
+@edges = []
+begin
+  # use IO/File foreach, it handles opening and closing the file and is the most memory efficient
+  file = File.foreach(@args['file_name']) do |x|
+    x.chomp =~ /^\[[^,]+,[^,]+,[0-9]+\]$/ ? @edges << x.chomp : fail("input file not formatted correctly, offending line #{x.chomp}")
+  end
+rescue Exception => e
+  usage "an error occurred trying to read contents of #{@args['file_name']}: #{e.message}"
+ensure
+  file.close unless file.nil?
+end
+
+puts Dijkstra::start(@args['source'], @args['destination'], @edges)
