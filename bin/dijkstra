@@ -28,4 +28,28 @@ ensure
   file.close unless file.nil?
 end
 
-puts Dijkstra::start(@args['source'], @args['destination'], @edges)
+# create the graph
+g = Dijkstra::Graph.new
+@edges.each do |edge|
+  edge = edge.gsub('[', '').gsub(']', '').split(',')
+  g.contains_node?(edge[0]) ? s = g.find(edge[0]) : s = Dijkstra::Node.new(edge[0])
+  g.contains_node?(edge[1]) ? d = g.find(edge[1]) : d = Dijkstra::Node.new(edge[1])
+  w = edge[2].to_i
+  e = Dijkstra::Edge.new(s, d, w)
+  g.add_edge(e)
+end
+
+# verify the nodes exist in the graph
+source = g.find(@args['source'])
+destination = g.find(@args['destination'])
+usage("Unable to find node #{@args['source']} in graph") if (source.nil?)
+usage("Unable to find node #{@args['destination']} in graph") if (destination.nil?)
+
+# run dijkstra
+results = Dijkstra::dijkstra(source, destination, g)
+
+unless results
+  puts "No path from #{source} to #{destination}"
+else
+  puts "Shortest path is #{results} with total cost #{results.last.distance}"
+end

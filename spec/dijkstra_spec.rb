@@ -4,23 +4,35 @@ require_relative '../lib/dijkstra'
 describe Dijkstra do
 
   before :each do
-    @edges = %w([A,B,1] [A,C,2] [B,C,3] [B,D,3] [C,D,1] [B,E,2] [D,F,3] [D,E,3] [E,G,3] [F,G,1])
+    @graph = Dijkstra::Graph.new
+    @edges = %w(A,B,1 A,C,2 B,C,3 B,D,3 C,D,1 B,E,2 D,F,3 D,E,3 E,G,3 F,G,1)
+    @edges.each do |edge|
+      edge = edge.split(',')
+      @graph.contains_node?(edge[0]) ? s = @graph.find(edge[0]) : s = Dijkstra::Node.new(edge[0])
+      @graph.contains_node?(edge[1]) ? d = @graph.find(edge[1]) : d = Dijkstra::Node.new(edge[1])
+      w = edge[2].to_i
+      e = Dijkstra::Edge.new(s, d, w)
+      @graph.add_edge(e)
+    end
+    @a = @graph.find('A')
+    @b = @graph.find('B')
+    @c = @graph.find('C')
+    @d = @graph.find('D')
+    @e = @graph.find('E')
+    @f = @graph.find('F')
+    @g = @graph.find('G')
   end
 
   it 'should find the shortest path given a source, destination, and graph' do
-    expect(Dijkstra::start('A','G',@edges)).to eq 'Shortest path is [A, B, E, G] with total cost 6'
+    expect(Dijkstra::dijkstra(@a,@g,@graph)).to eq [@a, @b, @e, @g]
+  end
+
+  it 'should find the shortest path given a source, destination, and graph' do
+    expect(Dijkstra::dijkstra(@a,@d,@graph)).to eq [@a, @c, @d]
   end
 
   it 'should find if there is no path given a source, destination, and graph' do
-    expect(Dijkstra::start('G','A',@edges)).to eq 'No path from G to A'
-  end
-
-  it 'should find if the source isnt in the graph' do
-    expect(Dijkstra::start('Z','A',@edges)).to eq 'Unable to find node Z in graph'
-  end
-
-  it 'should find if the destination isnt in the graph' do
-    expect(Dijkstra::start('A','Z',@edges)).to eq 'Unable to find node Z in graph'
+    expect(Dijkstra::dijkstra(@g,@a,@graph)).to eq false
   end
 
 end

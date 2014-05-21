@@ -14,11 +14,6 @@ module Dijkstra
       @edges << edge
     end
 
-    # adds the node to the node list
-    def add_node(node)
-      @nodes << node
-    end
-
     # return node if it is found, otherwise returns nil
     def find(char)
       @nodes.each { |n| return n if char == n.name }
@@ -28,6 +23,13 @@ module Dijkstra
     # returns true if a node exists for the particular character
     def contains_node?(char)
       @nodes.any? { |n| char == n.name }
+    end
+
+    private
+
+    # adds the node to the node list
+    def add_node(node)
+      @nodes << node
     end
 
   end
