@@ -4,6 +4,7 @@ A Ruby implementation of the Dijkstra algorithm as described here: ([http://en.w
 
 ## Installation
 
+    $ gem build dijkstra.gemspec
     $ gem install --local dijkstra
 
 ## Usage
